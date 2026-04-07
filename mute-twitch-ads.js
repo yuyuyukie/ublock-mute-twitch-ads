@@ -6,6 +6,33 @@
   if (window.location.href === 'about:blank') {
     return;
   }
+  const AD_BREAK_SELECTOR = '[aria-label="ad" i],' + [
+    'ad',
+    'annonce',
+    'werbung',
+    'anuncio',
+    'annuncio',
+    'hirdetésről',
+    'reclame',
+    'annonsen',
+    'reklamy',
+    'anúncio',
+    'reclamă',
+    'reklame',
+    'mainoksesta',
+    'quảng',
+    'reklam',
+    'διαφήμιση',
+    'реклама',
+    'рекламы',
+    'оголошення',
+    '광고에',
+  ].map(w => `button[aria-label$=" ${w}" i],button[aria-label*=" ${w} " i]`).join(',') + ',' + [
+    'โฆษณา',
+    '对此广告留下反馈',
+    '留下你對此廣告的意見反應',
+    'この広告のフィードバックを残す',
+  ].map(w => `button[aria-label*="${w}" i]`).join(',');
   let observedVideo = undefined;
   let observedContainer = undefined;
   let wasAdBreak = false;
@@ -13,12 +40,12 @@
     volume: 0,
     muted: true,
   };
-  const observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver(() => {
     if (!observedVideo) {
       return;
     }
     if (observedVideo && observedContainer) {
-      let isAdBreak = !!observedContainer.querySelector('[aria-label="Ad"]');
+      let isAdBreak = !!observedContainer.querySelector(AD_BREAK_SELECTOR);
       if (isAdBreak !== wasAdBreak) {
         log(isAdBreak ? 'ad started' : 'ad ended');
         wasAdBreak = isAdBreak;
